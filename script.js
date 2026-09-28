@@ -1033,118 +1033,112 @@ $$(".class-card").forEach(card => {
 
 
 /* =========================================================
-   DOUBT FORM
+   FORMspree FORMS
 ========================================================= */
+
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/meaopbqv";
 
 const doubtImage = $("#doubtImage");
 
-doubtImage.addEventListener("change", () => {
+if (doubtImage) {
+  doubtImage.addEventListener("change", () => {
+    $("#fileName").textContent = doubtImage.files.length
+      ? doubtImage.files[0].name
+      : "No file selected";
+  });
+}
 
-  if (doubtImage.files.length) {
+async function submitToFormspree(form, statusElement, submitButton, localKey) {
+  const originalButtonHTML = submitButton.innerHTML;
+  const formData = new FormData(form);
 
-    $("#fileName").textContent =
-      doubtImage.files[0].name;
+  submitButton.disabled = true;
+  submitButton.innerHTML = "Sending... <span>↗</span>";
+  statusElement.textContent = "";
+  statusElement.className = "form-status";
 
-  } else {
+  try {
+    const response = await fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Accept: "application/json"
+      }
+    });
 
-    $("#fileName").textContent =
-      "No file selected";
+    const result = await response.json().catch(() => ({}));
 
+    if (!response.ok) {
+      const message = result?.errors?.map(error => error.message).join(" ")
+        || "The form could not be submitted. Please try again.";
+      throw new Error(message);
+    }
+
+    const localData = Object.fromEntries(formData.entries());
+    if (localData.doubt_image instanceof File) {
+      localData.doubt_image = localData.doubt_image.name || null;
+    }
+    localData.createdAt = new Date().toISOString();
+    saveLocalData(localKey, localData);
+
+    form.reset();
+
+    if (form.id === "doubtForm") {
+      $("#fileName").textContent = "No file selected";
+    }
+
+    statusElement.textContent = "Submitted successfully. Your request has been received.";
+    statusElement.className = "form-status success";
+    showToast("Submitted successfully!", "✓");
+
+  } catch (error) {
+    console.error("Formspree submission error:", error);
+    statusElement.textContent = error.message || "Something went wrong. Please try again.";
+    statusElement.className = "form-status error";
+    showToast("Submission failed. Please try again.", "!");
+  } finally {
+    submitButton.disabled = false;
+    submitButton.innerHTML = originalButtonHTML;
   }
+}
 
-});
+const doubtForm = $("#doubtForm");
+const worksheetForm = $("#worksheetForm");
 
+if (doubtForm) {
+  doubtForm.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-$("#doubtForm").addEventListener("submit", (event) => {
+    submitToFormspree(
+      doubtForm,
+      $("#doubtStatus"),
+      $("#doubtSubmitBtn"),
+      "studyBuddyDoubts"
+    );
+  });
+}
 
-  event.preventDefault();
+if (worksheetForm) {
+  worksheetForm.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-  const doubtData = {
-
-    className: $("#doubtClass").value,
-
-    subject: $("#doubtSubject").value,
-
-    question: $("#doubtText").value,
-
-    image:
-      doubtImage.files.length
-        ? doubtImage.files[0].name
-        : null,
-
-    createdAt:
-      new Date().toISOString()
-
-  };
-
-  saveLocalData(
-    "studyBuddyDoubts",
-    doubtData
-  );
-
-  event.target.reset();
-
-  $("#fileName").textContent =
-    "No file selected";
-
-  showToast(
-    "Your doubt has been saved for this demo.",
-    "✓"
-  );
-
-});
-
-
-/* =========================================================
-   WORKSHEET FORM
-========================================================= */
-
-$("#worksheetForm").addEventListener("submit", (event) => {
-
-  event.preventDefault();
-
-  const worksheetData = {
-
-    className: $("#worksheetClass").value,
-
-    subject: $("#worksheetSubject").value,
-
-    topic: $("#worksheetTopic").value,
-
-    questions: $("#worksheetQuestions").value,
-
-    message: $("#worksheetMessage").value,
-
-    createdAt:
-      new Date().toISOString()
-
-  };
-
-  saveLocalData(
-    "studyBuddyWorksheets",
-    worksheetData
-  );
-
-  event.target.reset();
-
-  showToast(
-    "Worksheet request saved for this demo.",
-    "✓"
-  );
-
-});
-
+    submitToFormspree(
+      worksheetForm,
+      $("#worksheetStatus"),
+      $("#worksheetSubmitBtn"),
+      "studyBuddyWorksheets"
+    );
+  });
+}
 
 /* -----------------------------
    LOCAL STORAGE
 ----------------------------- */
 
 function saveLocalData(key, data) {
-
-  const existing =
-    JSON.parse(
-      localStorage.getItem(key) || "[]"
-    );
+  const existing = JSON.parse(
+    localStorage.getItem(key) || "[]"
+  );
 
   existing.push(data);
 
@@ -1152,7 +1146,6 @@ function saveLocalData(key, data) {
     key,
     JSON.stringify(existing)
   );
-
 }
 
 

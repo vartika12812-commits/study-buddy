@@ -572,14 +572,16 @@
 
       <div class="large-form-card reveal">
 
-        <form id="doubtForm">
+        <form id="doubtForm" action="https://formspree.io/f/meaopbqv" method="POST" enctype="multipart/form-data">
+
+          <input type="hidden" name="form_type" value="Ask Your Doubt">
 
           <div class="form-row">
 
             <div class="field">
               <label for="doubtClass">Class</label>
 
-              <select id="doubtClass" required>
+              <select id="doubtClass" name="class" required>
                 <option value="">Select class</option>
                 <option>Class 1</option>
                 <option>Class 2</option>
@@ -595,7 +597,7 @@
             <div class="field">
               <label for="doubtSubject">Subject</label>
 
-              <select id="doubtSubject" required>
+              <select id="doubtSubject" name="subject" required>
                 <option value="">Select subject</option>
                 <option>Mathematics</option>
                 <option>Science</option>
@@ -612,6 +614,7 @@
 
             <textarea
               id="doubtText"
+              name="question"
               rows="6"
               placeholder="Type your doubt here..."
               required
@@ -620,7 +623,7 @@
 
           <div class="upload-box">
 
-            <input type="file" id="doubtImage" accept="image/*">
+            <input type="file" id="doubtImage" name="doubt_image" accept="image/*">
 
             <label for="doubtImage">
               <span class="upload-icon">📷</span>
@@ -632,9 +635,10 @@
 
           </div>
 
-          <button class="btn btn-primary" type="submit">
+          <button class="btn btn-primary" type="submit" id="doubtSubmitBtn">
             Submit Doubt <span>→</span>
           </button>
+          <p class="form-status" id="doubtStatus" aria-live="polite"></p>
 
         </form>
 
@@ -654,14 +658,16 @@
 
       <div class="large-form-card reveal">
 
-        <form id="worksheetForm">
+        <form id="worksheetForm" action="https://formspree.io/f/meaopbqv" method="POST">
+
+          <input type="hidden" name="form_type" value="Custom Worksheet Request">
 
           <div class="form-row">
 
             <div class="field">
               <label for="worksheetClass">Class</label>
 
-              <select id="worksheetClass" required>
+              <select id="worksheetClass" name="class" required>
                 <option value="">Select class</option>
                 <option>Class 1</option>
                 <option>Class 2</option>
@@ -677,7 +683,7 @@
             <div class="field">
               <label for="worksheetSubject">Subject</label>
 
-              <select id="worksheetSubject" required>
+              <select id="worksheetSubject" name="subject" required>
                 <option value="">Select subject</option>
                 <option>Mathematics</option>
                 <option>Science</option>
@@ -697,6 +703,7 @@
               <input
                 type="text"
                 id="worksheetTopic"
+                name="topic"
                 placeholder="e.g. Algebra"
                 required
               >
@@ -705,7 +712,7 @@
             <div class="field">
               <label for="worksheetQuestions">Number of questions</label>
 
-              <select id="worksheetQuestions">
+              <select id="worksheetQuestions" name="number_of_questions">
                 <option>5</option>
                 <option selected>10</option>
                 <option>15</option>
@@ -720,14 +727,16 @@
 
             <textarea
               id="worksheetMessage"
+              name="message"
               rows="5"
               placeholder="Tell us what kind of questions you want..."
             ></textarea>
           </div>
 
-          <button class="btn btn-primary" type="submit">
+          <button class="btn btn-primary" type="submit" id="worksheetSubmitBtn">
             Request Worksheet <span>→</span>
           </button>
+          <p class="form-status" id="worksheetStatus" aria-live="polite"></p>
 
         </form>
 

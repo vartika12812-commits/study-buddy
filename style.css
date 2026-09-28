@@ -1772,6 +1772,30 @@ button {
 
 /* RESPONSIVE */
 
+
+/* FORM STATUS */
+.form-status {
+  min-height: 22px;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.form-status.success {
+  color: var(--rama-dark);
+}
+
+.form-status.error {
+  color: #b33a3a;
+}
+
+button:disabled {
+  opacity: .7;
+  cursor: wait;
+  transform: none !important;
+}
+
 @media (max-width: 950px) {
 
   .navbar nav,
